@@ -3,8 +3,8 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 
 from database import engine, Base, SessionLocal
-from models import User
-from schemas import UserCreate, UserLogin
+from models import User, LeaveRequest
+from schemas import UserCreate, UserLogin, LeaveCreate
 from security import (
     hash_password,
     verify_password,
@@ -134,4 +134,44 @@ def profile(
         "full_name": user.full_name,
         "email": user.email,
         "is_active": user.is_active
+    }
+
+@app.post("/leaves")
+def create_leave(
+    leave: LeaveCreate,
+    email: str = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+
+    user = db.query(User).filter(
+        User.email == email
+    ).first()
+
+    if not user:
+        raise HTTPException(
+            status_code=404,
+            detail="User not found"
+        )
+
+    if leave.end_date < leave.start_date:
+        raise HTTPException(
+            status_code=400,
+            detail="End date cannot be before start date"
+        )
+
+    new_leave = LeaveRequest(
+        user_id=user.id,
+        leave_type=leave.leave_type,
+        start_date=leave.start_date,
+        end_date=leave.end_date,
+        reason=leave.reason
+    )
+
+    db.add(new_leave)
+    db.commit()
+    db.refresh(new_leave)
+
+    return {
+        "message": "Leave request submitted successfully",
+        "leave_id": new_leave.id
     }
