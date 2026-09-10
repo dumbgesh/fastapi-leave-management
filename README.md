@@ -115,6 +115,3 @@ The project uses SQLite with SQLAlchemy and contains:
 * `leave_requests`
 
 Each leave request is linked to its user through `user_id`.
-
-```
-```
