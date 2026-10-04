@@ -26,8 +26,7 @@ A RESTful Employee Leave Management API built with FastAPI for managing employee
 
 ## Project Structure
 
-```text
-fastapi-learning/
+```fastapi-learning/
 ├── main.py
 ├── database.py
 ├── models.py
@@ -37,7 +36,7 @@ fastapi-learning/
 ├── leave_management.db
 ├── uploads/
 └── .gitignore
-
+```
 ## Setup
 
 ### 1. Clone the repository
